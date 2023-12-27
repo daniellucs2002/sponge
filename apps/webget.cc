@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// Use the TCPSocket and Address classes.
 void get_URL(const string &host, const string &path) {
     // Your code here.
 
@@ -13,14 +14,32 @@ void get_URL(const string &host, const string &path) {
     // the computer whose name is in the "host" string,
     // then request the URL path given in the "path" string.
 
+    TCPSocket client{};
+    client.connect(Address(host, "http"));  // telnet cs144.keithw.org http
+
+    // GET /hello HTTP/1.1
+    // Host: cs144.keithw.org
+    // Connection: close
+    //
+    client.write("GET " + path + " HTTP/1.1\r\nHost: " + host + "\r\nConnection: close\r\n\r\n");
+
     // Then you'll need to print out everything the server sends back,
     // (not just one call to read() -- everything) until you reach
     // the "eof" (end of file).
 
-    cerr << "Function called: get_URL(" << host << ", " << path << ").\n";
-    cerr << "Warning: get_URL() has not been implemented yet.\n";
+    // incoming byte stream ended once reaching EOF
+    while (!client.eof())
+    {
+        cout << client.read();
+    }
+
+    client.close();
+
+    // cerr << "Function called: get_URL(" << host << ", " << path << ").\n";
+    // cerr << "Warning: get_URL() has not been implemented yet.\n";
 }
 
+// example usage: ./apps/webget cs144.keithw.org /hello
 int main(int argc, char *argv[]) {
     try {
         if (argc <= 0) {
